@@ -18,3 +18,5 @@ docker-compose.yml
 .github/
 .circleci/
 renovate.json
+/.idea
+tsconfig.build.tsbuildinfo

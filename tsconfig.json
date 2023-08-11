@@ -21,10 +21,10 @@
     "noUnusedParameters": true,
     "resolveJsonModule": true,
     "strictFunctionTypes": true,
-    "noEmit": true,
     "useDefineForClassFields": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true
+    "incremental": true,
+    "declarationMap": true
   }
 }
