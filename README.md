@@ -143,7 +143,7 @@ export class CatsManagerService {
   
   @OnEvent('cat.created')
   async onCatCreated(cat: Cat) {
-    // I don't test this case, but I think it should work
+    //In this case you can use session from async local storage, but may be session is committed already
     await this.catsService.updateOne({ _id: cat._id }, { $set: { isCreated: true } });
   }
 }
