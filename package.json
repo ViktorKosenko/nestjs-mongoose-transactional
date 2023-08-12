@@ -1,13 +1,13 @@
 {
   "name": "nestjs-mongoose-transactional",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A transactional decorator implementation is provided for Nestjs Mongoose Transactions.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "lint": "eslint \"lib/**/*.ts\" --fix",
     "format": "prettier \"lib/**/*.ts\" --write",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "build": "rm -rf dist && tsc",
     "precommit": "lint-staged",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",

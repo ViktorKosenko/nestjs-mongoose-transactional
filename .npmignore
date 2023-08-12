@@ -19,4 +19,4 @@ docker-compose.yml
 .circleci/
 renovate.json
 /.idea
-tsconfig.build.tsbuildinfo
+.npmrc
