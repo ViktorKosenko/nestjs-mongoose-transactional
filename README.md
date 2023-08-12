@@ -143,7 +143,8 @@ export class CatsManagerService {
   
   @OnEvent('cat.created')
   async onCatCreated(cat: Cat) {
-    //In this case you can use session from async local storage, but may be session is committed already
+    // In this case you can get session from async local storage, 
+    // but may be session is already committed and your error don't rollback transaction.
     await this.catsService.updateOne({ _id: cat._id }, { $set: { isCreated: true } });
   }
 }
