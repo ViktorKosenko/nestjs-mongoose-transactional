@@ -1,17 +1,12 @@
-import { Inject } from '@nestjs/common';
 import { Connection } from 'mongoose';
 
-import { IMongooseTransactionalLogger } from '../interfaces/mongoose-transactional-logger.interface';
 import { sessionStorage } from '../storages/transactional-session.storage';
-import { MongooseTransactionalLoggerService } from '../services/mongoose-transactional-logger.service';
 
 /**
  * Decorator for wrapping method in mongoose transaction if it is not already wrapped
  * and session is not exists in async local storage
  *
  * Important: for using this decorator need add mongooseConnection: Connection to class
- *
- * If you want to use logger in this decorator you should add logger: LoggerService to class
  *
  * Important: for getting access to session you should use decorator AddSessionToLastArguments
  * after this decorator to add session to last argument of method with query or aggregation pipeline
@@ -59,32 +54,20 @@ import { MongooseTransactionalLoggerService } from '../services/mongoose-transac
  * }
  */
 export const Transactional = (): MethodDecorator => {
-  const injectLogger = Inject(MongooseTransactionalLoggerService);
-
   return (
-    target: object,
-    methodName: string | symbol,
+    _target: object,
+    _methodName: string | symbol,
     descriptor: TypedPropertyDescriptor<any>,
   ) => {
-    const className = target.constructor.name;
     const originalMethod = descriptor.value;
-    injectLogger(target, MongooseTransactionalLoggerService.name);
 
     descriptor.value = async function (...args: unknown[]): Promise<unknown> {
-      const logger: IMongooseTransactionalLogger =
-        this[`${MongooseTransactionalLoggerService.name}`];
-      logger.setContext(className);
-
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const mongooseConnection = this.mongooseConnection;
       const isMongoConnectionAlreadyExists =
         mongooseConnection instanceof Connection;
       if (!isMongoConnectionAlreadyExists) {
-        logger.warn(
-          methodName.toString(),
-          `Transactional decorator is used, but mongooseConnection is not defined`,
-        );
         return await originalMethod.apply(this, args);
       }
       if (sessionStorage.getSession()) {
@@ -101,8 +84,6 @@ export const Transactional = (): MethodDecorator => {
         return result;
       } catch (error) {
         await session.abortTransaction();
-        logger.error(methodName.toString(), error, { args });
-
         throw error;
       } finally {
         await session.endSession();

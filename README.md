@@ -17,63 +17,16 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TransactionalModule } from 'nestjs-mongoose-transactional';
 import { CatsModule } from './cats/cats.module';
-import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://localhost/nest'),
     MongooseTransactionalModule.forRoot({
       global: true,
-      injectLoggerClass: CustomLoggerService,
-      imports: [LoggerModule],
     }),
     CatsModule,
   ],
 })
-```
-
-### Implement logger
-
-```typescript
-import {Injectable, Module} from '@nestjs/common';
-import {LoggerService} from '@nestjs/common';
-
-@Module({
-  providers: [CustomLoggerService],
-  exports: [CustomLoggerService],
-})
-export class LoggerModule {}
-
-@Injectable()
-export class CustomLoggerService {
-  private context: string;
-  
-  constructor(private readonly logger: LoggerService) {
-  }
-  
-  setContext(context: string) {
-    this.context = context;
-  }
-  
-  error(
-    method: string,
-    error: string | Error | unknown,
-    meta?: string | Record<string, any> | Error,
-  ) {
-    this.logger.error(
-      `${this.context}::${method}::${error}`,
-      meta instanceof Error ? meta.stack : meta,
-    );
-  }
-
-  warn(
-    method: string,
-    message: string | Record<string, any> | [],
-    meta?: string | Record<string, any>,
-  ) {
-    this.logger.warn(`${this.context}::${method}::${message}`, meta);
-  }
-}
 ```
 
 ### Use AddSessionToLastArguments
@@ -160,8 +113,6 @@ export class CatsManagerService {
  * and session is not exists in async local storage
  *
  * Important: for using this decorator need add mongooseConnection: Connection to class
- *
- * If you want to use logger in this decorator you should add logger: LoggerService to class
  *
  * Important: for getting access to session you should use decorator AddSessionToLastArguments
  * after this decorator to add session to last argument of method with query or aggregation pipeline
