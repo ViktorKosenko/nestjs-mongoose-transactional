@@ -1,6 +1,6 @@
 {
   "name": "nestjs-mongoose-transactional",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A transactional decorator implementation is provided for Nestjs Mongoose Transactions.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -33,7 +33,6 @@
   "devDependencies": {
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
-    "@nestjs/platform-express": "^8.0.0",
     "@nestjs/mongoose": "^9.2.0",
     "@types/jest": "29.5.3",
     "@types/node": "^16.0.0",
