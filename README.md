@@ -10,25 +10,6 @@ $ npm install nestjs-mongoose-transactional
 
 Code samples not really working, just for demonstration purposes.
 
-### Import Module
-
-```typescript
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { TransactionalModule } from 'nestjs-mongoose-transactional';
-import { CatsModule } from './cats/cats.module';
-
-@Module({
-  imports: [
-    MongooseModule.forRoot('mongodb://localhost/nest'),
-    MongooseTransactionalModule.forRoot({
-      global: true,
-    }),
-    CatsModule,
-  ],
-})
-```
-
 ### Use AddSessionToLastArguments
 
 ```typescript
@@ -99,6 +80,25 @@ export class CatsManagerService {
     // In this case you can get session from async local storage, 
     // but may be session is already committed and your error don't rollback transaction.
     await this.catsService.updateOne({ _id: cat._id }, { $set: { isCreated: true } });
+  }
+}
+```
+
+### Use sessionStorage
+
+If you need to get access to session in another method you can use sessionStorage
+
+```typescript
+export class SomeClass {
+  constructor(private readonly catsService: CatsService) {}
+
+  @ThisDecoratorNotWorksWithAddSessionToLastArgumentsDecorator()
+  async someMethod(): Promise<void> {
+    // some code
+    const session = sessionStorage.getSession();
+    await this.catsService.someAnotherMethodWithQuery(args, session);
+    await this.catsService.someAnotherMethodWithAggregationPipeline(args, session);
+    // some code
   }
 }
 ```
@@ -204,25 +204,6 @@ export declare const Transactional: () => MethodDecorator;
  *  }
  */
 export declare const AddSessionToLastArguments: () => (_target: object, _methodName: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
-```
-
-## sessionStorage
-
-If you need to get access to session in another method you can use sessionStorage
-
-```typescript
-export class SomeClass {
-  constructor(private readonly catsService: CatsService) {}
-
-  @ThisDecoratorNotWorksWithAddSessionToLastArgumentsDecorator()
-  async someMethod(): Promise<void> {
-    // some code
-    const session = sessionStorage.getSession();
-    await this.catsService.someAnotherMethodWithQuery(args, session);
-    await this.catsService.someAnotherMethodWithAggregationPipeline(args, session);
-    // some code
-  }
-}
 ```
 
 ## License
